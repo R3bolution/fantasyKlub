@@ -1,69 +1,68 @@
-// app/components/TeamCard.tsx
+// app/navigation/BottomTabNavigator.tsx
 
 import React from 'react';
-import { Text, View, StyleSheet, Image } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import HomeScreen from '../screens/HomeScreen';
+import ClassificationScreen from '../screens/ClassificationScreen'; 
+import TeamScreen from '../screens/TeamScreen'; 
+import MarketScreen from '../screens/MarketScreen';
+import ActivityScreen from '../screens/ActivityScreen';
 
-interface Player {
-  id: number;
-  name: string;
-  position: string;
-  team: string;
-  price: number;
-  image: string;
-}
+const Tab = createBottomTabNavigator();
 
-interface TeamCardProps {
-  player: Player;
-}
-
-const TeamCard: React.FC<TeamCardProps> = ({ player }) => {
+const BottomTabNavigator = () => {
   return (
-    <View style={styles.card}>
-      <Image source={{ uri: player.image }} style={styles.image} />
-      <View style={styles.info}>
-        <Text style={styles.name}>{player.name}</Text>
-        <Text style={styles.position}>Position: {player.position}</Text>
-        <Text style={styles.team}>Team: {player.team}</Text>
-        <Text style={styles.price}>Price: ${player.price}</Text>
-      </View>
-    </View>
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: '#fff',
+          borderTopWidth: 1,
+          borderTopColor: '#ccc',
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Inicio"
+        component={HomeScreen}
+        options={{
+          tabBarIcon: ({ color }) => <FontAwesome name="home" size={20} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="Clasificación"
+        component={ClassificationScreen}
+        options={{
+          tabBarIcon: ({ color }) => <FontAwesome name="trophy" size={20} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="Equipo"
+        component={TeamScreen}  // Asegúrate de que aquí esté el componente correcto
+        options={{
+          tabBarIcon: ({ color }) => <FontAwesome name="users" size={20} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="Mercado"
+        component={MarketScreen}
+        options={{
+          tabBarIcon: ({ color }) => <FontAwesome name="shopping-cart" size={20} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="Actividad"
+        component={ActivityScreen}
+        options={{
+          tabBarIcon: ({ color }) => <FontAwesome name="bell" size={20} color={color} />,
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 8,
-    elevation: 2,
-  },
-  image: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-  },
-  info: {
-    marginLeft: 10,
-    justifyContent: 'center',
-  },
-  name: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  position: {
-    fontSize: 14,
-    color: 'gray',
-  },
-  team: {
-    fontSize: 14,
-    color: 'gray',
-  },
-  price: {
-    fontSize: 14,
-    color: 'green',
-  },
-});
-
-export default TeamCard;
+export default BottomTabNavigator;

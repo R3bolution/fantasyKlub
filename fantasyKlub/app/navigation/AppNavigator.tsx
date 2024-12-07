@@ -1,20 +1,14 @@
-// app/navigation/AppNavigator.tsx
-
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
+import OtherScreen from '../screens/OtherScreen';
 
-const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-const AppNavigator = () => {
+function AppNavigator() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator initialRouteName="Home">
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Other" component={OtherScreen} />
+    </Tab.Navigator>
   );
-};
-
-export default AppNavigator;
+}
