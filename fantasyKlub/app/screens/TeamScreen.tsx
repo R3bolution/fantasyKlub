@@ -1,31 +1,31 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Player } from '../types'; // Asegúrate de importar el tipo
+import { View, FlatList, StyleSheet } from 'react-native';
+import { playersData } from '../data/playersData'; // Asegúrate de que playersData está disponible
+import TeamCard from '../components/TeamCard'; // Importa el componente TeamCard
+import { Player } from '../types'; // Asegúrate de importar el tipo Player
 
-interface TeamCardProps {
-  player: Player; // Define la prop esperada
-}
-
-const TeamCard: React.FC<TeamCardProps> = ({ player }) => {
-  if (!player) {
-    return <Text>No player data available</Text>;
-  }
+const TeamScreen: React.FC = () => {
+  // Renderizar cada jugador en un TeamCard
+  const renderItem = ({ item }: { item: Player }) => {
+    return <TeamCard player={item} />;
+  };
 
   return (
-    <View style={styles.card}>
-      <Text>{player.name}</Text>
-      <Text>{player.position}</Text>
+    <View style={styles.container}>
+      <FlatList
+        data={playersData}  // Lista de jugadores
+        renderItem={renderItem}  // Cómo renderizar cada ítem
+        keyExtractor={(item) => item.id.toString()}  // Asegúrate de tener un identificador único
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
-    margin: 10,
-    padding: 15,
-    backgroundColor: '#f8f8f8',
-    borderRadius: 5,
+  container: {
+    flex: 1,
+    padding: 10,
   },
 });
 
-export default TeamCard;
+export default TeamScreen;

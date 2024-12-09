@@ -1,12 +1,9 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen';
+import React from 'react';
+import BottomTabNavigator from './BottomTabNavigator'; // Importa el BottomTabNavigator
 
-const Tab = createBottomTabNavigator();
+// Este archivo solo se encarga de la navegación interna, sin envolver con NavigationContainer
+const AppNavigator = () => {
+  return <BottomTabNavigator />;
+};
 
-function AppNavigator() {
-  return (
-    <Tab.Navigator initialRouteName="Home">
-      <Tab.Screen name="Home" component={HomeScreen} />
-    </Tab.Navigator>
-  );
-}
+export default AppNavigator;

@@ -1,9 +1,23 @@
 import React from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import BottomTabNavigator from './app/navigation/BottomTabNavigator';
+import AppNavigator from './app/navigation/AppNavigator';
 
-export default function App() {
+const App = () => {
   return (
-    <BottomTabNavigator />
+    <SafeAreaView style={styles.safeArea}>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </SafeAreaView>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff', // Asegúrate de mantener un fondo consistente
+  },
+});
+
+export default App;

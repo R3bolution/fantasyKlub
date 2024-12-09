@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Player } from '../types'; // Asegúrate de importar el tipo
+import { Player } from '../types'; // Asegúrate de que Player está correctamente tipado
 
 interface TeamCardProps {
-  player: Player; // Define la prop esperada
+  player: Player; // El jugador que se pasa como prop
 }
 
 const TeamCard: React.FC<TeamCardProps> = ({ player }) => {
