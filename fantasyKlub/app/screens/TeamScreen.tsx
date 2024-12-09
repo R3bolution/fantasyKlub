@@ -1,22 +1,23 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Player } from '../types'; // Asegúrate de importar el tipo
 
-// Asegúrate de que "player" esté siendo usado como props en este componente
-const TeamCard = ({ player }) => {
-    console.log(player);  // Verifica qué datos tiene "player"
-  
-    if (!player) {
-      return <Text>No player data available</Text>;  // Si no hay datos, muestra un mensaje
-    }
-  
-    return (
-      <View style={styles.card}>
-        <Text>{player.name}</Text>
-        <Text>{player.position}</Text>
-      </View>
-    );
-  };
-  
+interface TeamCardProps {
+  player: Player; // Define la prop esperada
+}
+
+const TeamCard: React.FC<TeamCardProps> = ({ player }) => {
+  if (!player) {
+    return <Text>No player data available</Text>;
+  }
+
+  return (
+    <View style={styles.card}>
+      <Text>{player.name}</Text>
+      <Text>{player.position}</Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   card: {
