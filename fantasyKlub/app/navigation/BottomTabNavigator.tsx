@@ -4,7 +4,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import HomeScreen from '../screens/HomeScreen';
 import ClassificationScreen from '../screens/ClassificationScreen';
 import TeamScreen from '../screens/equipo/TeamScreen';
-import MarketScreen from '../screens/MarketScreen';
+import MarketScreen from '../screens/mercado/MarketControler';
 import ActivityScreen from '../screens/ActivityScreen';
 import Header from './Header';
 
