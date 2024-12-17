@@ -1,18 +1,19 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 const app = express();
 const port = 3000;
 
-// Middleware para habilitar CORS (permitir solicitudes desde otros dominios)
 app.use(cors());
+app.use(express.json());
 
-// Conexión a la base de datos (ajusta la configuración a tus necesidades)
+// Conexión a la base de datos
 const dbConfig = {
-  host: 'localhost', // Usa la IP de tu máquina si estás en una red local
-  user: 'root',
-  password: '', // Tu contraseña de MySQL
-  database: 'prueba', // Nombre de la base de datos
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 };
 
 // Ruta para obtener un usuario por nombre de usuario
@@ -36,7 +37,6 @@ app.get("/users/:username", async (req, res) => {
   }
 });
 
-// Ruta principal para comprobar si el servidor está funcionando
 app.get("/", (req, res) => {
   res.send("Servidor Express funcionando correctamente");
 });
