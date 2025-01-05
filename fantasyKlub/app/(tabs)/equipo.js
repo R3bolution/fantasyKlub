@@ -1,9 +1,10 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
+import { EquipoLayout } from "../equipo"; // Importa desde el index.js de "equipo"
 
 export default function Equipo() {
-    return (
-        <View>
-            <Text>Equipo</Text>
-        </View>
-    )
+  return (
+    <View style={{ flex: 1 }}>
+      <EquipoLayout />
+    </View>
+  );
 }
