@@ -12,7 +12,7 @@ const App = () => {
     setError(null);
 
     try {
-      const response = await axios.post('http://192.168.1.27:3000/api/jugadores/plantilla', {  // Asegúrate de usar la IP correcta
+      const response = await axios.post('http://192.168.1.27:3000/api/equipo/plantilla', {  // Asegúrate de usar la IP correcta
         tipoConsulta: 'jugadores',
         params: {
           UsuarioID: 1,

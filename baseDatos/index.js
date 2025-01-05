@@ -12,8 +12,10 @@ app.use(cors());
 app.use(express.json());
 
 const jugadoresRoutes = require('./routes/jugadorRoutes'); 
-app.use('/api/jugadores', jugadoresRoutes);
+app.use('/api/equipo', jugadoresRoutes);
 
+const jornadasRoutes = require('./routes/jornadasRoutes'); 
+app.use('/api/jornada', jornadasRoutes);
 
 // Inicia el servidor
 app.listen(port, '0.0.0.0', () => {

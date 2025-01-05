@@ -8,7 +8,7 @@ export default function AlineacionScreen() {
   useEffect(() => {
     const fetchJugadores = async () => {
       try {
-        const response = await axios.post('http://192.168.1.27:3000/api/jugadores/alineacion', {
+        const response = await axios.post('http://192.168.1.27:3000/api/equipo/alineacion', {
             UsuarioID: 1,
             LigaID: 1
         });        

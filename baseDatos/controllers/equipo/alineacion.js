@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-const dbConfig = require('../models/db'); // Asegúrate de que la ruta sea correcta
+const dbConfig = require('../../models/db'); // Asegúrate de que la ruta sea correcta
 
 // Función para manejar las consultas de jugadores
 const alineacion = async (req, res) => {

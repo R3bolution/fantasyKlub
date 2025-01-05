@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-const dbConfig = require('../models/db'); // Importa la configuración de la base de datos
+const dbConfig = require('../../models/db'); // Importa la configuración de la base de datos
 
 // Crea un pool de conexiones para mejorar el rendimiento
 const pool = mysql.createPool(dbConfig);
