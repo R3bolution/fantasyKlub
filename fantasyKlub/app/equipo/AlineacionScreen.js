@@ -1,25 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
-const jugadores = [
-  { id: '1', nombre: 'Jugador 1' },
-  { id: '2', nombre: 'Jugador 2' },
-  { id: '3', nombre: 'Jugador 3' },
-];
+import axios from 'axios';
 
 export default function AlineacionScreen() {
+  const [jugadores, setJugadores] = useState([]);
+
+  useEffect(() => {
+    const fetchJugadores = async () => {
+      try {
+        const response = await axios.post('http://192.168.1.27:3000/api/jugadores/alineacion', {
+            UsuarioID: 1,
+            LigaID: 1
+        });        
+        setJugadores(response.data);
+      } catch (error) {
+        console.error('Error al obtener los jugadores:', error);
+      }
+    };
+    
+    fetchJugadores();
+  }, []);
+
+  const jugadoresAlineados = [...jugadores];
+
+  while (jugadoresAlineados.length < 3) {
+    jugadoresAlineados.push({ id: null, nombre: 'Sin alinear', alineado: false });
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.field}>
-        <View style={[styles.player, styles.player1]}>
-          <Text style={styles.playerText}>Jugador 1</Text>
-        </View>
-        <View style={[styles.player, styles.player2]}>
-          <Text style={styles.playerText}>Jugador 2</Text>
-        </View>
-        <View style={[styles.player, styles.player3]}>
-          <Text style={styles.playerText}>Jugador 3</Text>
-        </View>
+        {jugadoresAlineados.map((jugador, index) => (
+          <View
+            key={jugador.id || index}
+            style={[styles.player, styles[`player${index + 1}`]]}
+          >
+            <Text style={styles.playerText}>{jugador.nombre}</Text>
+          </View>
+        ))}
       </View>
     </View>
   );
@@ -52,29 +70,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   player1: {
-    position: 'absolute',
-    top: '15%',  // Ajustado a un 15% para que esté más cerca de la parte superior
-    left: '50%', // Centrado horizontalmente
-    transform: [{ translateX: -25 }], // Corrige el centrado horizontal exacto
+    top: '15%',
+    left: '50%',
+    transform: [{ translateX: -25 }],
   },
   player2: {
-    position: 'absolute',
-    bottom: '25%', // Colocado en la parte inferior
-    left: '20%',   // Desplazado hacia la izquierda
-    transform: [{ translateX: -25 }], // Centrado horizontalmente
+    bottom: '25%',
+    left: '20%',
+    transform: [{ translateX: -25 }],
   },
   player3: {
-    position: 'absolute',
-    bottom: '25%', // Colocado en la parte inferior
-    right: '20%',  // Desplazado hacia la derecha
-    transform: [{ translateX: 25 }], // Centrado horizontalmente
-  },
-  listItem: {
-    padding: 10,
-    marginVertical: 5,
-    backgroundColor: '#ddd',
-    borderRadius: 5,
-    marginHorizontal: 20,
+    bottom: '25%',
+    right: '20%',
+    transform: [{ translateX: 25 }],
   },
   playerText: {
     color: '#fff',
