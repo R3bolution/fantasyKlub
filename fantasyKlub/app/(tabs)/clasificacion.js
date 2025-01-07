@@ -70,7 +70,7 @@ const Clasificacion = () => {
           // Agregar al acumulado de clasificaciones, ahora con el nombre del usuario
           clasificacionesAcumuladas.push({
             usuarioLigaID: usuario.UsuarioLigaID,
-            nombre: usuario.nombre, // Aquí se agrega el nombre
+            nombre: usuario.nombre || 'Sin nombre', // Asegurar que haya un valor de texto
             puntos: totalPuntos,
           });
         }
@@ -92,16 +92,16 @@ const Clasificacion = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Clasificación General</Text>
-
       <Text style={styles.subtitle}>Resultados</Text>
+
       {clasificaciones.length > 0 ? (
         <FlatList
           data={clasificaciones}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.row}>
-              <Text style={styles.cell}>{item.nombre}</Text>  {/* Aquí se muestra el nombre */}
-              <Text style={styles.cell}>{item.puntos}</Text>
+              <Text style={styles.cell}>{item.nombre}</Text>
+              <Text style={styles.cell}>{String(item.puntos)}</Text>
             </View>
           )}
         />

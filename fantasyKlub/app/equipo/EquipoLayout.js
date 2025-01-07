@@ -2,7 +2,10 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { StyleSheet } from 'react-native';
 
-import { AlineacionScreen, PlantillaScreen, PuntosScreen } from './index'; // Importación limpia
+// Importaciones directas en lugar de usar 'index.js'
+import AlineacionScreen from './AlineacionScreen';
+import PlantillaScreen from './PlantillaScreen';
+import PuntosScreen from './PuntosScreen';
 
 const Tab = createMaterialTopTabNavigator();
 
