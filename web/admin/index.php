@@ -3,19 +3,8 @@
 
 session_start();
 
-if (!isset($_SESSION['usuario'])) {
-    header("Location: login.php");
-    exit;
-}
 
 include '../conection.php';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['user'];
@@ -34,4 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         echo "Usuario o contraseña incorrectos.";
     }
+}
+
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php");
+    exit;
 }
