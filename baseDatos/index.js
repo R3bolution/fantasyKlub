@@ -20,6 +20,9 @@ app.use('/api/jornada', jornadasRoutes);
 const ligasRoutes = require('./routes/ligasRoutes'); 
 app.use('/api/liga', ligasRoutes);
 
+const usersRoutes = require('./routes/usersRoutes'); 
+app.use('/api/user', usersRoutes);
+
 // Inicia el servidor
 app.listen(port, '0.0.0.0', () => {
   console.log(`Servidor corriendo en http://192.168.1.27:${port}`);

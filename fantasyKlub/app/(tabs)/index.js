@@ -1,11 +1,24 @@
-import { View, Text } from "react-native";
+import React from 'react';
+import { View, Text, Button } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
 export default function Index() {
-    return (
-        <>
-            <View>
-                <Text>Inicio</Text>
-            </View>
-        </>
-    )
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');  // Elimina el token de AsyncStorage
+      router.replace('/LoginScreen');  // Redirige al usuario a la pantalla de login
+    } catch (error) {
+      console.error('Error al intentar cerrar sesión', error);
+    }
+  };
+
+  return (
+    <View>
+      <Text>Inicio</Text>
+      <Button title="Cerrar sesión" onPress={handleLogout} />
+    </View>
+  );
 }
