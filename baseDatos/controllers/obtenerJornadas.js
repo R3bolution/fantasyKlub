@@ -1,9 +1,8 @@
 const mysql = require('mysql2/promise');
 const dbConfig = require('../models/db'); // Asegúrate de que la ruta sea correcta
 
-// Función para manejar las consultas de jugadores
+// Función para manejar las consultas de jornadas
 const obtenerJornadas = async (req, res) => {
-  const { UsuarioID, LigaID } = req.body; // Cambiar a req.query para obtener parámetros de la URL
   try {
     // Conexión a la base de datos
     const connection = await mysql.createConnection(dbConfig);
@@ -12,7 +11,7 @@ const obtenerJornadas = async (req, res) => {
     const query = `
       SELECT jornada FROM Jornadas;
     `;
-    const [rows] = await connection.query(query);
+    const [rows] = await connection.query(query); // Ejecutamos la consulta
     await connection.end();
 
     // Responde con los resultados
