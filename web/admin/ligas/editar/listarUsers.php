@@ -6,7 +6,7 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM usuarios_ligas 
     WHERE usuarios_ligas.usuarioID = usuarios.usuarioID
-    AND usuarios_ligas.ligaID = {$_POST['id']}
+    AND usuarios_ligas.ligaID = {$_GET['id']}
 );";
 
 try {
@@ -19,7 +19,7 @@ try {
 }
 ?>
 <form action="anadir.php" method="post">
-    <input type="hidden" name="id" value="<?php echo $_POST['id']; ?>">
+    <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
     <select name="user" id="user">
         <?php foreach ($users as $user) {
             echo "<option value='{$user['UsuarioID']}'>{$user['Nombre']}</option>";

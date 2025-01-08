@@ -6,9 +6,9 @@ if (!isset($_SESSION['usuario'])) {
 
 include '../../conection.php';
 
-$query = "SELECT l.LigaID,l.Nombre,COUNT(*) AS 'usuarios' FROM Ligas l
-JOIN usuarios_ligas ul ON l.LigaID=ul.LigaID
-GROUP BY l.LigaID";
+$query = "SELECT l.LigaID,l.Nombre,COUNT(ul.UsuarioID) AS 'usuarios' FROM Ligas l
+LEFT JOIN usuarios_ligas ul ON l.LigaID=ul.LigaID
+GROUP BY l.LigaID;";
 
 try {
     $stmt = $pdo->query($query);
@@ -36,11 +36,14 @@ try {
                 <td><?php echo $liga['Nombre']; ?></td>
                 <td><?php echo $liga['usuarios']; ?>/5</td>
                 <td>
-                    <form action="editar/editar.php" method="post" style="display: inline;">
+                    <form action="editar/editar.php" method="get" style="display: inline;">
                         <input type="hidden" name="id" value="<?php echo $liga['LigaID']; ?>">
                         <button type="submit">Editar</button>
                     </form>
-                    <a href="eliminar.php?id=<?php echo $liga['LigaID']; ?>">Eliminar</a>
+                    <form action="eliminar.php" method="post" style="display: inline;">
+                        <input type="hidden" name="id" value="<?php echo $liga['LigaID']; ?>">
+                        <button type="submit">Eliminar</button>
+                    </form>
                 </td>
             </tr>
         <?php endforeach; ?>

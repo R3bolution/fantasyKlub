@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($stmt->rowCount() > 0) {
                 echo "El usuario con ID $userID fue eliminado de la liga con ID $ligaID correctamente.";
+                header("Location: editar.php?id=$ligaID");
             } else {
                 echo "No se encontró un registro para eliminar.";
             }

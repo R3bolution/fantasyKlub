@@ -3,11 +3,11 @@
 include '../../plantillas/header.php';
 include '../../../conection.php';
 
-$queryLiga = "SELECT * FROM ligas WHERE ligaID={$_POST['id']};";
+$queryLiga = "SELECT * FROM ligas WHERE ligaID={$_GET['id']};";
 
 $queryUsuarios = "SELECT u.UsuarioID,u.Nombre FROM usuarios_ligas ul
                     JOIN usuarios u ON ul.UsuarioID=u.UsuarioID
-                    WHERE ul.ligaID={$_POST['id']};";
+                    WHERE ul.ligaID={$_GET['id']};";
 
 try {
     $stmtLiga = $pdo->query($queryLiga);
@@ -39,7 +39,7 @@ try {
                 <td>
                     <form action="sacar.php" method="post" style="display: inline;">
                         <input type="hidden" name="userid" value="<?php echo $user['UsuarioID']; ?>">
-                        <input type="hidden" name="ligaid" value="<?php echo $_POST['id']; ?>">
+                        <input type="hidden" name="ligaid" value="<?php echo $_GET['id']; ?>">
                         <button type="submit">Sacar</button>
                     </form>
             </tr>

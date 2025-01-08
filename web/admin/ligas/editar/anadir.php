@@ -2,10 +2,7 @@
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['user'])) {
     $usuarioID = $_POST['user'];
-    
     $ligaID = $_POST['id'];
-
-
     try {
         include '../../../conection.php';
         // Prepara la consulta para insertar el usuario en la liga
@@ -19,6 +16,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['user'])) {
         // Ejecuta la consulta
         if ($stmt->execute()) {
             echo "Usuario agregado a la liga con éxito.";
+            session_start();
+            $_SESSION['mensaje'] = "Liga creada exitosamente";
+            $postData = [
+                'id' => $ligaID
+            ];
+
+            // Redirigir después de la solicitud
+            header("Location: editar.php?id={$ligaID}");
         } else {
             echo "Error al agregar el usuario.";
         }

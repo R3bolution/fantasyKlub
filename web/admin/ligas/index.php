@@ -7,11 +7,18 @@ if (!isset($_SESSION['usuario'])) {
 
 include '../plantillas/header.php';
 
+if (isset($_SESSION['mensaje'])) {
+    echo "<h2>{$_SESSION['mensaje']}</h2>";
+    unset($_SESSION['mensaje']);
+}
 ?>
 
 <h1>Ligas</h1>
 
-<a href="crear.php">Crear liga</a>
+<form action="anadir.php" method="post">
+    <input type="text" name="nombre" id="nombre" placeholder="Nombre">
+    <input type="submit" value="Añadir">
+</form>
 
 <?php
 
