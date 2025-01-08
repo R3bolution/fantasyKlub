@@ -1,4 +1,10 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['usuario'])) {
+    header("Location: ../index.php");
+    exit;
+}
 
 include '../plantillas/header.php';
 include '../../conection.php';
@@ -15,6 +21,11 @@ try {
 
 } catch (PDOException $e) {
     die("Error al ejecutar la consulta: " . $e->getMessage());
+}
+
+if (!empty($_SESSION['success'])) {
+    echo "<h3>{$_SESSION['success']}</h3>";
+    unset($_SESSION['success']);
 }
 ?>
 <h2>Jornadas</h2>
@@ -33,7 +44,7 @@ try {
         }
         ?>
     </select>
-    <input type="submit" value="Añadir puntuaciones">
+    <input type="submit" value="Ir a jornada">
 </form>
 <form action="" method="post">
     <input type="text" name="jornada" id="jornada">

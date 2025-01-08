@@ -13,7 +13,8 @@ try {
 
 ?>
 
-<form action="" method="get">
+<form action="guardarPuntos.php" method="post">
+    <input type="hidden" name="jornada" value="<?php echo $_GET['jornada'] ?>">
     <table>
         <thead>
             <tr>
@@ -29,9 +30,10 @@ try {
                     <td><?php echo $jugador['JugadorID']; ?></td>
                     <td><?php echo $jugador['Nombre']; ?></td>
                     <td><?php echo $jugador['Deporte']; ?></td>
-                    <td><input type="text" name="<?php $jugador['JugadorID'] ?>" id="<?php $jugador['JugadorID'] ?>" value="<?php echo $jugador['Puntos'] ?>"></td>
+                    <td><input type="text" name="<?php echo $jugador['JugadorID'] ?>" id="<?php $jugador['JugadorID'] ?>" value="<?php echo $jugador['Puntos'] ?>"></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
+    <input type="submit" value="Guardar">
 </form>
