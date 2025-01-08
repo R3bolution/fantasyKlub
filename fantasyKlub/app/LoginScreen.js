@@ -16,9 +16,12 @@ const LoginScreen = () => {
         correo: username,
         contraseña: password,
       });
-
+  
       if (response.data.token) {
-        await AsyncStorage.setItem('token', response.data.token);
+        const { token, userId } = response.data;  // Extraemos el userId de la respuesta
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('userId', userId.toString());  // Asegúrate de convertirlo a string
+        console.log('ID guardada en AsyncStorage:', userId);  // Log para verificar
         router.replace('/(tabs)');
       } else {
         setError('Credenciales incorrectas');

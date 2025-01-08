@@ -28,13 +28,16 @@ const loginUser = async (req, res) => {
 
     // Si la contraseña es válida, generamos un token JWT
     const token = jwt.sign(
-      { userId: user.UserID, correo: user.Correo },  // Aquí puedes incluir más datos si es necesario
+      { userId: user.UsuarioID, correo: user.Correo },  // Aquí puedes incluir más datos si es necesario
       'your_secret_key',  // Asegúrate de usar una clave secreta segura y privada
       { expiresIn: '1h' }  // El token expirará en 1 hora
     );
 
     // Enviar el token en la respuesta
-    res.json({ token });
+    res.json({ 
+      token,
+      userId: user.UsuarioID
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Ocurrió un error al intentar iniciar sesión' });

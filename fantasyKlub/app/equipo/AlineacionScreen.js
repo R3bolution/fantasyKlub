@@ -1,24 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AlineacionScreen() {
   const [jugadores, setJugadores] = useState([]);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const fetchJugadores = async () => {
+    const fetchUserIdAndJugadores = async () => {
       try {
+        // Recuperar el userId desde AsyncStorage
+        const id = await AsyncStorage.getItem('userId');
+        if (id) {
+          setUserId(id);  // Guardar el userId en el estado
+          console.log("ID del usuario:", id);  // Verificar que se obtiene la ID
+        }
+
+        // Ahora que tenemos el userId, hacer la solicitud para los jugadores
         const response = await axios.post('http://192.168.1.27:3000/api/equipo/alineacion', {
-            UsuarioID: 1,
-            LigaID: 1
-        });        
-        setJugadores(response.data);
+          UsuarioID: id || 1, // Usamos el userId recuperado, o un valor por defecto si no está disponible
+          LigaID: 1
+        });
+        setJugadores(response.data);  // Guardar los jugadores en el estado
       } catch (error) {
         console.error('Error al obtener los jugadores:', error);
       }
     };
-    
-    fetchJugadores();
+
+    fetchUserIdAndJugadores();
   }, []);
 
   const jugadoresAlineados = [...jugadores];
