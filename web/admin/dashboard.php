@@ -11,10 +11,10 @@ echo "Bienvenido, " . htmlspecialchars($_SESSION['usuario']);
 ?>
     <h2>Panel de Control</h2>
 
-    <a href="#">Usuarios</a>
+    <a href="usuarios/">Usuarios</a>
     <a href="jornadas/">Jornadas</a>
     <a href="jugadores/">Jugadores</a>
-    <a href="#">Ligas</a>
+    <a href="ligas/">Ligas</a>
 
     <br><a href="logout.php">Cerrar sesion</a>
 
