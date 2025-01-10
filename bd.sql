@@ -1,0 +1,123 @@
+DROP DATABASE IF EXISTS app_bd;
+CREATE DATABASE IF NOT EXISTS app_bd;
+
+USE app_bd;
+
+CREATE TABLE Usuarios (
+    UsuarioID INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(100) NOT NULL,
+    Correo VARCHAR(255) UNIQUE NOT NULL,
+    ContraseñaHash VARCHAR(255) NOT NULL,
+    FechaRegistro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UltimoAcceso DATETIME,
+    Estado ENUM('ACTIVO', 'SUSPENDIDO', 'ELIMINADO') DEFAULT 'ACTIVO',
+    AvatarURL VARCHAR(255),
+    UNIQUE(Correo)
+);
+
+CREATE TABLE Ligas (
+    LigaID INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Usuarios_Ligas (
+    UsuarioLigaID INT PRIMARY KEY AUTO_INCREMENT,
+    UsuarioID INT NOT NULL,
+    LigaID INT NOT NULL,
+    UNIQUE(UsuarioID, LigaID),
+    FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID) ON DELETE CASCADE,
+    FOREIGN KEY (LigaID) REFERENCES Ligas(LigaID) ON DELETE CASCADE
+);
+
+CREATE TABLE Jugadores (
+    JugadorID INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(255) NOT NULL,
+    Deporte VARCHAR(100) NOT NULL,
+    Posicion VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Plantillas (
+    PlantillaID INT PRIMARY KEY AUTO_INCREMENT, 
+    UsuarioLigaID INT NOT NULL,           
+    JugadorID INT NOT NULL,  
+    Estado ENUM('ALINEADO', 'RESERVADO') DEFAULT 'RESERVADO',
+    PosicionAlineacion VARCHAR(50) DEFAULT NULL,
+    UNIQUE(UsuarioLigaID, JugadorID),
+    FOREIGN KEY (UsuarioLigaID) REFERENCES Usuarios_Ligas(UsuarioLigaID) ON DELETE CASCADE,
+    FOREIGN KEY (JugadorID) REFERENCES Jugadores(JugadorID) ON DELETE CASCADE
+);
+
+CREATE TABLE Actividades (
+    ActividadID INT PRIMARY KEY AUTO_INCREMENT,
+    UsuarioLigaID INT NOT NULL,
+    TipoActividad ENUM('COMPRA', 'VENTA', 'OTRO') NOT NULL,
+    JugadorID INT,
+    Fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UsuarioLigaID) REFERENCES Usuarios_Ligas(UsuarioLigaID) ON DELETE CASCADE,
+    FOREIGN KEY (JugadorID) REFERENCES Jugadores(JugadorID) ON DELETE SET NULL
+);
+
+CREATE TABLE Mercado (
+    MercadoID INT PRIMARY KEY AUTO_INCREMENT,
+    LigaID INT NOT NULL,
+    JugadorID INT NOT NULL,
+    Disponible BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (LigaID) REFERENCES Ligas(LigaID) ON DELETE CASCADE,
+    FOREIGN KEY (JugadorID) REFERENCES Jugadores(JugadorID) ON DELETE CASCADE
+);
+
+CREATE TABLE Historial_Mercado (
+    HistorialID INT PRIMARY KEY AUTO_INCREMENT,
+    LigaID INT NOT NULL,
+    JugadorID INT NOT NULL,
+    Fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (LigaID) REFERENCES Ligas(LigaID) ON DELETE CASCADE,
+    FOREIGN KEY (JugadorID) REFERENCES Jugadores(JugadorID) ON DELETE CASCADE
+);
+
+CREATE TABLE Jornadas (
+    JornadaID INT PRIMARY KEY AUTO_INCREMENT,
+    Jornada INT NOT NULL,
+    FechaInicio DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FechaFin DATETIME,
+    UNIQUE(Jornada)
+);
+
+CREATE TABLE Puntuaciones_Ligas (
+    PuntuacionID INT PRIMARY KEY AUTO_INCREMENT,
+    UsuarioLigaID INT NOT NULL,
+    JornadaID INT NOT NULL,  -- Referencia a la jornada actual
+    Puntos INT DEFAULT 0,
+    UNIQUE(UsuarioLigaID, JornadaID),
+    FOREIGN KEY (UsuarioLigaID) REFERENCES Usuarios_Ligas(UsuarioLigaID) ON DELETE CASCADE,
+    FOREIGN KEY (JornadaID) REFERENCES Jornadas(JornadaID) ON DELETE CASCADE
+);
+
+CREATE TABLE Puntuaciones_Jugadores (
+    PuntuacionJugadorID INT PRIMARY KEY AUTO_INCREMENT,
+    JugadorID INT NOT NULL,
+    JornadaID INT NOT NULL,  -- Referencia a la jornada actual
+    Puntos INT DEFAULT 0,
+    UNIQUE(JugadorID, JornadaID),
+    FOREIGN KEY (JugadorID) REFERENCES Jugadores(JugadorID) ON DELETE CASCADE,
+    FOREIGN KEY (JornadaID) REFERENCES Jornadas(JornadaID) ON DELETE CASCADE
+);
+
+CREATE TABLE Economia_Ligas (
+    EconomiaID INT PRIMARY KEY AUTO_INCREMENT,
+    UsuarioLigaID INT NOT NULL,
+    Saldo DECIMAL(15, 2) DEFAULT 0, 
+    IngresosTotales DECIMAL(15, 2) DEFAULT 0, 
+    GastosTotales DECIMAL(15, 2) DEFAULT 0, 
+    FOREIGN KEY (UsuarioLigaID) REFERENCES Usuarios_Ligas(UsuarioLigaID) ON DELETE CASCADE
+);
+
+CREATE TABLE Historial_Jugadores_Liga (
+    HistorialID INT PRIMARY KEY AUTO_INCREMENT,
+    UsuarioLigaID INT NOT NULL,
+    Jornada INT NOT NULL,
+    JugadorID INT NOT NULL,
+    FOREIGN KEY (UsuarioLigaID) REFERENCES Usuarios_Ligas(UsuarioLigaID) ON DELETE CASCADE,
+    FOREIGN KEY (JugadorID) REFERENCES Jugadores(JugadorID) ON DELETE CASCADE,
+    FOREIGN KEY (Jornada) REFERENCES Jornadas(Jornada) ON DELETE CASCADE
+);
