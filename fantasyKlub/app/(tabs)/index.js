@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList, TouchableOpacity, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Button,
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import axios from "axios";
 
 export default function Index() {
   const [userId, setUserId] = useState(null); // Estado para almacenar la ID del usuario
@@ -15,21 +22,24 @@ export default function Index() {
   useEffect(() => {
     const fetchUserIdAndLigas = async () => {
       try {
-        const id = await AsyncStorage.getItem('userId'); // Recuperar la ID desde AsyncStorage
+        const id = await AsyncStorage.getItem("userId"); // Recuperar la ID desde AsyncStorage
         if (id) {
           setUserId(id); // Guardar la ID en el estado
 
           // Llamada a la API para obtener las ligas
-          const response = await axios.post('http://192.168.1.27:3000/api/liga/ligasUsuarios', {
-            UsuarioID: id,
-          });
+          const response = await axios.post(
+            "http://192.168.1.27:3000/api/liga/ligasUsuarios",
+            {
+              UsuarioID: id,
+            }
+          );
 
           // Añadir total de participantes a cada liga
           const ligasConParticipantes = await Promise.all(
             response.data.map(async (liga) => {
               try {
                 const participantesResponse = await axios.post(
-                  'http://192.168.1.27:3000/api/liga/contarParticipantes',
+                  "http://192.168.1.27:3000/api/liga/contarParticipantes",
                   { LigaID: liga.LigaID }
                 );
 
@@ -59,7 +69,7 @@ export default function Index() {
           setAllData(response.data); // Guardar todos los datos en el estado adicional
         }
       } catch (error) {
-        console.error('Error al obtener las ligas del usuario:', error);
+        console.error("Error al obtener las ligas del usuario:", error);
       } finally {
         setIsLoading(false); // Ocultar indicador de carga
       }
@@ -70,11 +80,11 @@ export default function Index() {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('token'); // Elimina el token de AsyncStorage
-      await AsyncStorage.removeItem('userId'); // Opcional: Eliminar la ID del usuario también
-      router.replace('/LoginScreen'); // Redirige al usuario a la pantalla de login
+      await AsyncStorage.removeItem("token"); // Elimina el token de AsyncStorage
+      await AsyncStorage.removeItem("userId"); // Opcional: Eliminar la ID del usuario también
+      router.replace("/LoginScreen"); // Redirige al usuario a la pantalla de login
     } catch (error) {
-      console.error('Error al intentar cerrar sesión', error);
+      console.error("Error al intentar cerrar sesión", error);
     }
   };
 
@@ -84,14 +94,23 @@ export default function Index() {
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 24, marginBottom: 20, textAlign: 'center' }}>Inicio</Text>
+      <Text style={{ fontSize: 24, marginBottom: 20, textAlign: "center" }}>
+        Inicio
+      </Text>
       {userId !== null ? (
         <>
-          <Text style={{ fontSize: 18, marginBottom: 10 }}>Tu ID es: {userId}</Text>
+          <Text style={{ fontSize: 18, marginBottom: 10 }}>
+            Tu ID es: {userId}
+          </Text>
           {selectedLiga && (
-            <Text style={{ fontSize: 18, marginBottom: 20 }}>
-              Estás en la liga con ID: {selectedLiga.LigaID}
-            </Text>
+            <>
+              <Text style={{ fontSize: 18, marginBottom: 20 }}>
+                Estás en la liga con ID: {selectedLiga.LigaID}
+              </Text>
+              <Text style={{ fontSize: 18, marginBottom: 20 }}>
+                UsuarioLigaEs: {selectedLiga.UsuarioLigaID}
+              </Text>
+            </>
           )}
           {isLoading ? (
             <Text style={{ fontSize: 18 }}>Cargando datos...</Text>
@@ -107,9 +126,15 @@ export default function Index() {
                         padding: 10,
                         marginBottom: 10,
                         borderWidth: 1,
-                        borderColor: selectedLiga?.LigaID === item.LigaID ? '#007BFF' : '#ccc',
+                        borderColor:
+                          selectedLiga?.LigaID === item.LigaID
+                            ? "#007BFF"
+                            : "#ccc",
                         borderRadius: 5,
-                        backgroundColor: selectedLiga?.LigaID === item.LigaID ? '#E6F0FF' : '#FFF',
+                        backgroundColor:
+                          selectedLiga?.LigaID === item.LigaID
+                            ? "#E6F0FF"
+                            : "#FFF",
                       }}
                     >
                       <Text style={{ fontSize: 16 }}>{item.nombre}</Text>
@@ -122,7 +147,9 @@ export default function Index() {
               />
               {/* Tabla adicional para mostrar todos los datos de la API */}
               <View style={{ marginTop: 20 }}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>
+                <Text
+                  style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}
+                >
                   Datos completos para depuración:
                 </Text>
                 <ScrollView>
@@ -133,11 +160,13 @@ export default function Index() {
                         padding: 10,
                         marginBottom: 10,
                         borderWidth: 1,
-                        borderColor: '#aaa',
+                        borderColor: "#aaa",
                         borderRadius: 5,
                       }}
                     >
-                      <Text style={{ fontSize: 14 }}>{JSON.stringify(data, null, 2)}</Text>
+                      <Text style={{ fontSize: 14 }}>
+                        {JSON.stringify(data, null, 2)}
+                      </Text>
                     </View>
                   ))}
                 </ScrollView>
@@ -146,9 +175,15 @@ export default function Index() {
           )}
         </>
       ) : (
-        <Text style={{ fontSize: 18, marginBottom: 20 }}>Cargando tu ID...</Text>
+        <Text style={{ fontSize: 18, marginBottom: 20 }}>
+          Cargando tu ID...
+        </Text>
       )}
-      <Button title="Cerrar sesión" onPress={handleLogout} style={{ marginTop: 20 }} />
+      <Button
+        title="Cerrar sesión"
+        onPress={handleLogout}
+        style={{ marginTop: 20 }}
+      />
     </View>
   );
 }
