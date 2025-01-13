@@ -12,21 +12,20 @@ import { useRouter } from "expo-router";
 import axios from "axios";
 
 export default function Index() {
-  const [userId, setUserId] = useState(null); // Estado para almacenar la ID del usuario
-  const [ligas, setLigas] = useState([]); // Estado para almacenar las ligas
-  const [isLoading, setIsLoading] = useState(true); // Estado para mostrar indicador de carga
-  const [selectedLiga, setSelectedLiga] = useState(null); // Estado para la liga seleccionada
-  const [allData, setAllData] = useState([]); // Estado para almacenar todos los datos de la API
+  const [userId, setUserId] = useState(null);
+  const [ligas, setLigas] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedLiga, setSelectedLiga] = useState(null);
+  const [allData, setAllData] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
     const fetchUserIdAndLigas = async () => {
       try {
-        const id = await AsyncStorage.getItem("userId"); // Recuperar la ID desde AsyncStorage
+        const id = await AsyncStorage.getItem("userId");
         if (id) {
-          setUserId(id); // Guardar la ID en el estado
+          setUserId(id);
 
-          // Llamada a la API para obtener las ligas
           const response = await axios.post(
             "http://192.168.1.27:3000/api/liga/ligasUsuarios",
             {
@@ -34,7 +33,6 @@ export default function Index() {
             }
           );
 
-          // Añadir total de participantes a cada liga
           const ligasConParticipantes = await Promise.all(
             response.data.map(async (liga) => {
               try {
@@ -59,19 +57,32 @@ export default function Index() {
             })
           );
 
-          setLigas(ligasConParticipantes); // Guardar las ligas con participantes en el estado
+          setLigas(ligasConParticipantes);
 
-          // Seleccionar por defecto la primera liga
-          if (ligasConParticipantes.length > 0) {
-            setSelectedLiga(ligasConParticipantes[0]); // Selecciona la primera liga
+          // Verificar si ya existe una liga seleccionada en AsyncStorage
+          const storedLigaId = await AsyncStorage.getItem("UsuarioLigaID");
+
+          if (storedLigaId) {
+            // Si ya existe una liga seleccionada, establecerla como seleccionada
+            const selected = ligasConParticipantes.find(
+              (liga) => liga.UsuarioLigaID.toString() === storedLigaId
+            );
+            setSelectedLiga(selected);
+          } else if (ligasConParticipantes.length > 0) {
+            // Si no hay liga seleccionada, seleccionar la primera liga disponible
+            const defaultLiga = ligasConParticipantes[0];
+            setSelectedLiga(defaultLiga);
+
+            // Guardar el UsuarioLigaID de la liga por defecto en AsyncStorage
+            await AsyncStorage.setItem("UsuarioLigaID", defaultLiga.UsuarioLigaID.toString());
           }
 
-          setAllData(response.data); // Guardar todos los datos en el estado adicional
+          setAllData(response.data);
         }
       } catch (error) {
         console.error("Error al obtener las ligas del usuario:", error);
       } finally {
-        setIsLoading(false); // Ocultar indicador de carga
+        setIsLoading(false);
       }
     };
 
@@ -80,16 +91,22 @@ export default function Index() {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("token"); // Elimina el token de AsyncStorage
-      await AsyncStorage.removeItem("userId"); // Opcional: Eliminar la ID del usuario también
-      router.replace("/LoginScreen"); // Redirige al usuario a la pantalla de login
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("userId");
+      router.replace("/LoginScreen");
     } catch (error) {
       console.error("Error al intentar cerrar sesión", error);
     }
   };
 
-  const handleSelectLiga = (liga) => {
-    setSelectedLiga(liga); // Establecer la liga seleccionada
+  const handleSelectLiga = async (liga) => {
+    setSelectedLiga(liga);
+    try {
+      // Guardar el UsuarioLigaID de la liga seleccionada en AsyncStorage
+      await AsyncStorage.setItem("UsuarioLigaID", liga.UsuarioLigaID.toString());
+    } catch (error) {
+      console.error("Error al guardar UsuarioLigaID en AsyncStorage:", error);
+    }
   };
 
   return (
@@ -145,7 +162,6 @@ export default function Index() {
                   </TouchableOpacity>
                 )}
               />
-              {/* Tabla adicional para mostrar todos los datos de la API */}
               <View style={{ marginTop: 20 }}>
                 <Text
                   style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}

@@ -3,10 +3,10 @@ const dbConfig = require('../../models/db'); // Asegúrate de que la ruta sea co
 
 // Función para manejar las consultas de jugadores
 const alineacion = async (req, res) => {
-  const { UsuarioID, LigaID } = req.body; // Cambiar a req.query para obtener parámetros de la URL
+  const { UsuarioLigaID } = req.body; // Cambiar a req.query para obtener parámetros de la URL
 
   // Validación de parámetros
-  if (!UsuarioID || !LigaID) {
+  if (!UsuarioLigaID) {
     return res.status(400).json({ message: 'Faltan parámetros UsuarioID o LigaID' });
   }
 
@@ -19,10 +19,9 @@ const alineacion = async (req, res) => {
       SELECT j.nombre
       FROM plantillas p 
       JOIN jugadores j ON p.JugadorID = j.JugadorID
-      JOIN usuarios_ligas ul ON p.UsuarioLigaID = ul.UsuarioLigaID
-      WHERE ul.UsuarioID = ? AND ul.LigaID = ? AND p.estado = 'ALINEADO';
+      WHERE p.UsuarioLigaID = ? AND p.estado = 'ALINEADO';
     `;
-    const [rows] = await connection.query(query, [UsuarioID, LigaID]);
+    const [rows] = await connection.query(query, [UsuarioLigaID]);
     await connection.end();
 
     // Responde con los resultados
