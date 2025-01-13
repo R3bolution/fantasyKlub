@@ -42,7 +42,7 @@ try {
                         <input type="hidden" name="ligaid" value="<?php echo $_GET['id']; ?>">
                         <button type="submit">Sacar</button>
                     </form>
-                    <form action="jugadores/plantilla.php" method="post" style="display: inline;">
+                    <form action="jugadores/controlador.php" method="post" style="display: inline;">
                         <input type="hidden" name="userid" value="<?php echo $user['UsuarioID']; ?>">
                         <input type="hidden" name="ligaid" value="<?php echo $_GET['id']; ?>">
                         <button type="submit">Plnatilla</button>
