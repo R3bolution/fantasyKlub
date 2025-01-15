@@ -2,7 +2,7 @@ const mysql = require('mysql2/promise');
 const dbConfig = require('../../models/db'); // Asegúrate de que la ruta sea correcta
 
 // Función para manejar las consultas de jugadores
-const plantilla = async (req, res) => {
+const obtenerReservados = async (req, res) => {
   const { UsuarioLigaID } = req.body; // Cambiar a req.query para obtener parámetros de la URL
 
   // Validación de parámetros
@@ -16,10 +16,9 @@ const plantilla = async (req, res) => {
 
     // Consulta para obtener los jugadores alineados
     const query = `
-          SELECT j.JugadorID, j.nombre, j.deporte, j.posicion 
-          FROM plantillas p 
-          JOIN jugadores j ON p.JugadorID = j.JugadorID 
-          WHERE p.UsuarioLigaID=?;
+        SELECT * FROM plantillas p
+        JOIN jugadores j ON p.JugadorID=j.JugadorID
+        WHERE p.UsuarioLigaID=? AND p.estado='RESERVADO';
     `;
     const [rows] = await connection.query(query, [UsuarioLigaID]);
     await connection.end();
@@ -33,4 +32,4 @@ const plantilla = async (req, res) => {
 };
 
 // Exportar controlador
-module.exports = { plantilla };
+module.exports = { obtenerReservados };

@@ -36,8 +36,7 @@ const obtenerJugadoresPorJornada = async (usuarioLigaID, jornada, JornadaID) => 
 const obtenerJugadoresAlineados = async (usuarioID, ligaID) => {
   try {
     const response = await axios.post('http://192.168.1.27:3000/api/equipo/alineacion', {
-      UsuarioID: usuarioID,
-      LigaID: ligaID,
+      UsuarioLigaID: 2,
     });
     return response.data;
   } catch (error) {

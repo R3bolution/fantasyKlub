@@ -1,74 +1,78 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 export default function AlineacionScreen() {
   const [jugadores, setJugadores] = useState([]);
-  const [userId, setUserId] = useState(null);
   const [usuarioLigaID, setUsuarioLigaID] = useState(null);
+  const navigation = useNavigation(); // Hook para navegación
 
-  // Usamos useFocusEffect para recargar los datos cada vez que la pantalla recibe el enfoque
   useFocusEffect(
     React.useCallback(() => {
       const fetchUserIdAndJugadorData = async () => {
         try {
-          // Recuperar userId y UsuarioLigaID desde AsyncStorage
-          const id = await AsyncStorage.getItem("userId");
           const ligaId = await AsyncStorage.getItem("UsuarioLigaID");
 
-          console.log("userId:", id); // Log para verificar el userId
-          console.log("UsuarioLigaID:", ligaId); // Log para verificar el UsuarioLigaID
-
-          if (id && ligaId) {
-            setUserId(id);
-            setUsuarioLigaID(ligaId);  // Establece el UsuarioLigaID
-
-            // Solicitar los jugadores para esa liga
-            console.log("Realizando solicitud con UsuarioLigaID:", ligaId); // Log de la solicitud
+          if (ligaId) {
+            setUsuarioLigaID(ligaId);
 
             const response = await axios.post('http://192.168.1.27:3000/api/equipo/alineacion', {
-              UsuarioLigaID: ligaId, // Usamos el ligaId recuperado del AsyncStorage
+              UsuarioLigaID: parseInt(ligaId),
             });
-
-            console.log("Respuesta de la API:", response.data); // Log para verificar la respuesta
 
             setJugadores(response.data);
           } else {
-            console.error("No se encontraron valores en AsyncStorage.");
+            Alert.alert('Error', 'No se encontró información de liga. Por favor, vuelve a seleccionar una liga.');
           }
         } catch (error) {
-          console.error("Error al obtener la información:", error.message);
-          // Mostrar mensaje amigable al usuario
-          Alert.alert('Error', 'Hubo un problema al obtener los jugadores. Intenta de nuevo más tarde.');
+          if (error.response) {
+            Alert.alert('Error', `Error del servidor: ${error.response.data.message || 'Algo salió mal'}`);
+          } else if (error.request) {
+            Alert.alert('Error', 'No se pudo conectar con el servidor. Verifica tu conexión a internet.');
+          } else {
+            Alert.alert('Error', 'Ocurrió un error inesperado. Intenta de nuevo más tarde.');
+          }
         }
       };
 
       fetchUserIdAndJugadorData();
-    }, [usuarioLigaID])  // Este efecto se ejecuta cada vez que usuarioLigaID cambie
+    }, [])
   );
 
   const jugadoresAlineados = [...jugadores];
   while (jugadoresAlineados.length < 3) {
-    jugadoresAlineados.push({ id: null, nombre: 'Sin alinear', alineado: false });
+    jugadoresAlineados.push({ jugadorID: null, nombre: 'Sin alinear', alineado: false });
   }
+
+  const handlePlayerPress = async (jugador) => {
+    try {
+      // Guardamos el JugadorID en AsyncStorage
+      await AsyncStorage.setItem('selectedJugadorID', jugador.jugadorID.toString());
+
+      // Aquí pasamos toda la información del jugador, incluyendo el JugadorID
+      navigation.navigate('CambioJugadorScreen', { jugador });
+    } catch (error) {
+      console.log('Error', 'No se pudo guardar el jugador seleccionado.');
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.infoText}>
-        {/* Mostrar el UsuarioLigaID en la pantalla */}
         UsuarioLigaID seleccionado: {usuarioLigaID}
       </Text>
 
       <View style={styles.field}>
         {jugadoresAlineados.map((jugador, index) => (
-          <View
-            key={jugador.id || index}
+          <TouchableOpacity
+            key={jugador.jugadorID || index}
             style={[styles.player, styles[`player${index + 1}`]]}
+            onPress={() => handlePlayerPress(jugador)} // Al presionar, pasamos el jugador completo
           >
             <Text style={styles.playerText}>{jugador.nombre}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     </View>

@@ -3,8 +3,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { StyleSheet } from 'react-native';
 
 // Importaciones directas en lugar de usar 'index.js'
-import AlineacionScreen from './AlineacionScreen';
-import PlantillaScreen from './PlantillaScreen';
+import AlineacionControler from './AlineacionControler';
+import PlantillaControler from './PlantillaControlador';
 import PuntosScreen from './PuntosScreen';
 
 const Tab = createMaterialTopTabNavigator();
@@ -20,8 +20,8 @@ export default function EquipoLayout() {
         tabBarStyle: styles.tabBarStyle,
       }}
     >
-      <Tab.Screen name="Alineación" component={AlineacionScreen} />
-      <Tab.Screen name="Plantilla" component={PlantillaScreen} />
+      <Tab.Screen name="Alineación" component={AlineacionControler} />
+      <Tab.Screen name="Plantilla" component={PlantillaControler} />
       <Tab.Screen name="Puntos" component={PuntosScreen} />
     </Tab.Navigator>
   );

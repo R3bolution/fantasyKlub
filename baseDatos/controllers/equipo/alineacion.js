@@ -16,7 +16,7 @@ const alineacion = async (req, res) => {
 
     // Consulta para obtener los jugadores alineados
     const query = `
-      SELECT j.nombre
+      SELECT j.nombre,j.jugadorID
       FROM plantillas p 
       JOIN jugadores j ON p.JugadorID = j.JugadorID
       WHERE p.UsuarioLigaID = ? AND p.estado = 'ALINEADO';
