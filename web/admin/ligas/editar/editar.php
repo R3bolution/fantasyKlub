@@ -47,6 +47,12 @@ try {
                         <input type="hidden" name="ligaid" value="<?php echo $_GET['id']; ?>">
                         <button type="submit">Plnatilla</button>
                     </form>
+                    <form action="historial/controlador.php" method="post">
+                        <input type="hidden" name="userid" value="<?php echo $user['UsuarioID']; ?>">
+                        <input type="hidden" name="ligaid" value="<?php echo $_GET['id']; ?>">
+                        <button type="submit">Historial</button>
+                    </form>
+                </td>
             </tr>
         <?php endforeach; ?>
 
