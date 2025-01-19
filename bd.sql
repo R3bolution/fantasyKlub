@@ -78,6 +78,7 @@ CREATE TABLE Historial_Mercado (
 CREATE TABLE Jornadas (
     JornadaID INT PRIMARY KEY AUTO_INCREMENT,
     Jornada INT NOT NULL,
+    Iniciado BOOLEAN DEFAULT FALSE,
     FechaInicio DATETIME DEFAULT CURRENT_TIMESTAMP,
     FechaFin DATETIME,
     UNIQUE(Jornada)

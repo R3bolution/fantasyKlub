@@ -8,9 +8,7 @@ const obtenerJornadas = async (req, res) => {
     const connection = await mysql.createConnection(dbConfig);
 
     // Consulta para obtener las jornadas
-    const query = `
-      SELECT jornada FROM Jornadas;
-    `;
+    const query = `SELECT * FROM Jornadas;`;
     const [rows] = await connection.query(query); // Ejecutamos la consulta
     await connection.end();
 

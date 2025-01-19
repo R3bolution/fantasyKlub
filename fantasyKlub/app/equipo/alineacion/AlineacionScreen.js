@@ -16,7 +16,7 @@ export default function AlineacionScreen() {
           const ligaId = await AsyncStorage.getItem("UsuarioLigaID");
 
           if (ligaId) {
-            setUsuarioLigaID(ligaId);
+            setUsuarioLigaID(ligaId);  // Se actualiza el estado con el UsuarioLigaID
 
             const response = await axios.post('http://192.168.1.27:3000/api/equipo/alineacion', {
               UsuarioLigaID: parseInt(ligaId),
@@ -38,7 +38,7 @@ export default function AlineacionScreen() {
       };
 
       fetchUserIdAndJugadorData();
-    }, [])
+    }, [])  // El useEffect se ejecutará solo cuando el componente se enfoque
   );
 
   const jugadoresAlineados = [...jugadores];
@@ -61,7 +61,7 @@ export default function AlineacionScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.infoText}>
-        UsuarioLigaID seleccionado: {usuarioLigaID}
+        UsuarioLigaID seleccionado: {usuarioLigaID || 'Cargando...'}
       </Text>
 
       <View style={styles.field}>

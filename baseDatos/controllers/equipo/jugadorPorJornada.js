@@ -24,7 +24,7 @@ const jugadorPorJornada = async (req, res) => {
 
     // Consulta para obtener los jugadores y puntos por jornada
     const query = `
-      SELECT j.Nombre, p.puntos 
+      SELECT j.nombre, p.puntos 
       FROM historial_jugadores_liga h 
       JOIN Jugadores j ON h.JugadorID = j.JugadorID
       LEFT JOIN Puntuaciones_Jugadores p ON h.JugadorID = p.JugadorID AND p.JornadaID = ?
