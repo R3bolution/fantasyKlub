@@ -93,10 +93,13 @@ export default function Index() {
     setSelectedLiga(liga);
     try {
       await AsyncStorage.setItem("UsuarioLigaID", liga.UsuarioLigaID.toString());
+      await AsyncStorage.setItem("LigaID", liga.LigaID.toString());
+      Alert.alert("Liga seleccionada", `Has seleccionado la liga: ${liga.nombre}`);
     } catch {
-      Alert.alert("Error", "No se pudo seleccionar la liga. Por favor, intenta de nuevo.");
+      Alert.alert("Error", "No se pudo guardar la liga seleccionada. Por favor, intenta de nuevo.");
     }
   };
+  
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 20, paddingBottom: 40 }}>

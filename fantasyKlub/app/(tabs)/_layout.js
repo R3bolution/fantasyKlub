@@ -11,13 +11,12 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Inicio",
-          // tabBarIcon: () =>
         }}
       />
       <Tabs.Screen
         name="clasificacion"
         options={{
-          title: "Clasificacion",
+          title: "Clasificación",
         }}
       />
       <Tabs.Screen
