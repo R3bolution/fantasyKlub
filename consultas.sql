@@ -1,6 +1,9 @@
 USE app_bd;
 
-SELECT j.Nombre,p.puntos FROM historial_jugadores_liga h 
-JOIN Jugadores j ON h.JugadorID=j.JugadorID
-JOIN Puntuaciones_Jugadores p ON h.JugadorID=p.JugadorID
-WHERE h.usuarioLigaID = 1 AND h.jornada = 1 AND p.JornadaID=1;
+SELECT * FROM jugadores 
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM usuarios_ligas ul
+    JOIN plantillas p ON ul.UsuarioLigaID = p.UsuarioLigaID
+    WHERE ul.ligaID = 1 AND p.JugadorID = jugadores.JugadorID
+);

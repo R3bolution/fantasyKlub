@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView }
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
-import { useNavigation } from '@react-navigation/native'; // Importar el hook de navegación
+import { useNavigation } from '@react-navigation/native';
 
 export default function ClasificacionScreen() {
   const [usuarioLigaID, setUsuarioLigaID] = useState(null);
