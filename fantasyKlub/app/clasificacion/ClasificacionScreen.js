@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from '@react-navigation/native';
+import { obtenerUsuarios, obtenerJornadas, obtenerPuntuacion } from "../../database/consultas";  // Importar las funciones
 
 export default function ClasificacionScreen() {
   const [usuarioLigaID, setUsuarioLigaID] = useState(null);
@@ -24,32 +24,20 @@ export default function ClasificacionScreen() {
             setUsuarioLigaID(storedUsuarioLigaID);
             setLigaID(storedLigaID);
 
-            const usuariosResponse = await axios.post(
-              "http://192.168.1.27:3000/api/liga/obtenerUsuarios",
-              { LigaID: parseInt(storedLigaID) }
-            );
-            setUsuarios(usuariosResponse.data);
+            // Obtener usuarios y jornadas desde consultas.js
+            const usuariosResponse = await obtenerUsuarios(storedLigaID);
+            setUsuarios(usuariosResponse);
 
-            const jornadasResponse = await axios.post(
-              "http://192.168.1.27:3000/api/jornada/obtenerJornadas"
-            );
-            setJornadas(jornadasResponse.data);
+            const jornadasResponse = await obtenerJornadas();
+            setJornadas(jornadasResponse);
 
             const puntuacionesMap = {};
-            for (const usuario of usuariosResponse.data) {
+            for (const usuario of usuariosResponse) {
               puntuacionesMap[usuario.UsuarioLigaID] = {};
-              for (const jornada of jornadasResponse.data) {
-                const response = await axios.post(
-                  "http://192.168.1.27:3000/api/liga/obtenerPuntuacion",
-                  {
-                    UsuarioLigaID: usuario.UsuarioLigaID,
-                    jornadaID: jornada.JornadaID,
-                    jornada: jornada.Jornada,
-                  }
-                );
-
-                if (response.data.length === 3) {
-                  puntuacionesMap[usuario.UsuarioLigaID][jornada.Jornada] = response.data;
+              for (const jornada of jornadasResponse) {
+                const response = await obtenerPuntuacion(usuario.UsuarioLigaID, jornada.JornadaID, jornada.Jornada);
+                if (response.length === 3) {
+                  puntuacionesMap[usuario.UsuarioLigaID][jornada.Jornada] = response;
                 } else {
                   puntuacionesMap[usuario.UsuarioLigaID][jornada.Jornada] = [];
                 }
@@ -67,7 +55,7 @@ export default function ClasificacionScreen() {
           console.error("Error al cargar datos:", error);
           Alert.alert(
             "Error",
-            error.response?.data?.message || "No se pudieron cargar los datos."
+            error.message || "No se pudieron cargar los datos."
           );
         }
       };
@@ -111,9 +99,9 @@ export default function ClasificacionScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>Clasificación</Text>
-
+  
       {usuarioLigaID && ligaID ? (
         <>
           <Text style={styles.text}>UsuarioLigaID: {usuarioLigaID}</Text>
@@ -122,25 +110,24 @@ export default function ClasificacionScreen() {
       ) : (
         <Text style={styles.text}>Cargando datos...</Text>
       )}
-
+  
       <FlatList
         data={usuariosOrdenados}
         keyExtractor={(item) => item.UsuarioLigaID.toString()}
         renderItem={({ item, index }) => {
           const totalPuntos = calcularTotalPuntos(item.UsuarioLigaID);
-
-          // Usar un 'if' para verificar si es el usuario actual y aplicar los estilos correspondientes
+  
           let userItemStyle = styles.userItem;
           let userNameStyle = styles.userName;
           if (item.UsuarioLigaID == usuarioLigaID) {
-            userItemStyle = styles.userItemCurrent;  // Estilo para el usuario actual
-            userNameStyle = styles.userNameCurrent;  // Estilo para el nombre del usuario actual
+            userItemStyle = styles.userItemCurrent;
+            userNameStyle = styles.userNameCurrent;
           }
-
+  
           return (
             <TouchableOpacity
               onPress={() => handleUserPress(item)}
-              style={userItemStyle}  // Aplica el estilo adecuado
+              style={userItemStyle}
             >
               <Text style={userNameStyle}>
                 {index + 1}. {item.nombre} - {totalPuntos}
@@ -152,9 +139,9 @@ export default function ClasificacionScreen() {
           <Text style={styles.text}>No hay usuarios en esta liga.</Text>
         }
       />
-    </ScrollView>
+    </View>
   );
-}
+};  
 
 const styles = StyleSheet.create({
   container: {

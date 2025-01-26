@@ -7,64 +7,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-
-const obtenerJornadas = async () => {
-  try {
-    const response = await axios.post(
-      "http://192.168.1.27:3000/api/jornada/obtenerJornadas",
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response.data.map((jornada) => ({
-      ...jornada,
-      iniciado: jornada.Iniciado,
-    }));
-  } catch (error) {
-    console.error("Error al obtener las jornadas:", error);
-    return [];
-  }
-};
-
-const obtenerJugadoresPorJornada = async (
-  usuarioLigaID,
-  jornada,
-  JornadaID
-) => {
-  try {
-    const response = await axios.post(
-      "http://192.168.1.27:3000/api/equipo/jugadorPorJornada",
-      {
-        usuarioLigaID,
-        jornada,
-        JornadaID,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener los jugadores:", error);
-    return { jugadores: [] };
-  }
-};
-
-const obtenerJugadoresAlineados = async (usuarioLigaID) => {
-  try {
-    const response = await axios.post(
-      "http://192.168.1.27:3000/api/equipo/alineacion",
-      {
-        UsuarioLigaID: usuarioLigaID,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener los jugadores alineados:", error);
-    return [];
-  }
-};
+import {
+  obtenerJornadas,
+  obtenerJugadoresPorJornada,
+  obtenerJugadoresAlineados,
+} from "../../database/consultas";
 
 export default function PuntosScreen() {
   const [jornadas, setJornadas] = useState([]);
@@ -160,7 +107,7 @@ export default function PuntosScreen() {
                 key={index}
                 style={[
                   styles.jornada,
-                  item.Jornada === selectedJornada && styles.selectedJornada, // Estilo para la jornada seleccionada
+                  item.Jornada === selectedJornada && styles.selectedJornada,
                 ]}
                 onPress={() => {
                   setSelectedJornada(item.Jornada);
@@ -233,8 +180,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   selectedJornada: {
-    backgroundColor: "#795144", 
-    borderColor: "#FFEF3F", 
+    backgroundColor: "#795144",
+    borderColor: "#FFEF3F",
   },
   noJornadasText: {
     color: "#888",

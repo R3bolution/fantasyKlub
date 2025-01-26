@@ -1,8 +1,8 @@
 import { View, Text, TextInput, Button, StyleSheet, Alert, Modal } from "react-native";
 import { useState, useEffect } from "react";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage"; 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native"; // Importa useNavigation
+import { crearLiga, unirseLiga } from "../../database/consultas"; // Importa las funciones de consultas
 
 export default function CrearUnirseLiga() {
   const [isCreating, setIsCreating] = useState(true);
@@ -26,16 +26,10 @@ export default function CrearUnirseLiga() {
   const handleCreateLeague = async () => {
     if (leagueName.trim()) {
       try {
-        const response = await axios.post(
-          "http://192.168.1.27:3000/api/liga/crearLiga",
-          {
-            Nombre: leagueName,
-            UsuarioID: userId,
-          }
-        );
+        const response = await crearLiga(leagueName, userId);
 
-        if (response.data.LigaID) {
-          console.log("Liga creada exitosamente:", response.data);
+        if (response.LigaID) {
+          console.log("Liga creada exitosamente:", response);
           navigation.navigate("InicioScreen"); // Redirige a la pantalla de inicio después de crear la liga
         }
       } catch (error) {
@@ -50,21 +44,15 @@ export default function CrearUnirseLiga() {
   const handleJoinLeague = async () => {
     if (joinCode.trim()) {
       try {
-        const response = await axios.post(
-          "http://192.168.1.27:3000/api/liga/unirseLiga", // Llamada al API de unirse
-          {
-            CodigoLiga: joinCode,
-            UsuarioID: userId,
-          }
-        );
+        const response = await unirseLiga(joinCode, userId);
 
-        if (response.data.message) {
-          console.log(response.data.message);
+        if (response.message) {
+          console.log(response.message);
           navigation.navigate("InicioScreen"); // Redirigir a la pantalla de inicio
         }
       } catch (error) {
         console.error("Error al unirse a la liga:", error);
-        setErrorMessage(error.response?.data?.message || "Ocurrió un error. Inténtalo de nuevo.");
+        setErrorMessage(error.message || "Ocurrió un error. Inténtalo de nuevo.");
         setShowError(true); // Mostrar el error
       }
     } else {

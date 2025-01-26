@@ -10,16 +10,16 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import { getLigasPorUsuario, contarParticipantes } from "../../database/consultas"; // Importa las funciones
 
 export default function InicioScreen() {
   const [userId, setUserId] = useState(null);
   const [ligas, setLigas] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedLiga, setSelectedLiga] = useState(null);
-  const [isAlertVisible, setIsAlertVisible] = useState(false); // Estado para controlar la visibilidad de la alerta personalizada
-  const [alertMessage, setAlertMessage] = useState(""); // Mensaje de la alerta
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
   const router = useRouter();
   const navigation = useNavigation();
 
@@ -30,24 +30,13 @@ export default function InicioScreen() {
       if (id) {
         setUserId(id);
 
-        const response = await axios.post(
-          "http://192.168.1.27:3000/api/liga/ligasUsuarios",
-          { UsuarioID: id }
-        );
+        const ligasData = await getLigasPorUsuario(id);
 
         const ligasConParticipantes = await Promise.all(
-          response.data.map(async (liga) => {
+          ligasData.map(async (liga) => {
             try {
-              const participantesResponse = await axios.post(
-                "http://192.168.1.27:3000/api/liga/contarParticipantes",
-                { LigaID: liga.LigaID }
-              );
-
-              const totalParticipantes =
-                participantesResponse.data.length > 0
-                  ? participantesResponse.data[0].total
-                  : 0;
-
+              const participantes = await contarParticipantes(liga.LigaID);
+              const totalParticipantes = participantes.length > 0 ? participantes[0].total : 0;
               return { ...liga, totalParticipantes };
             } catch {
               return { ...liga, totalParticipantes: 0 };
@@ -80,14 +69,12 @@ export default function InicioScreen() {
     }
   };
 
-  // Ejecutar la función cada vez que la pantalla se cargue
   useEffect(() => {
     fetchUserIdAndLigas();
-  }, []); // Esto solo se ejecutará cuando la página se cargue
+  }, []);
 
-  // Función para actualizar la lista de ligas después de crear una liga
   const refreshLigas = async () => {
-    setIsLoading(true); // Muestra el estado de carga
+    setIsLoading(true);
     await fetchUserIdAndLigas();
   };
 
@@ -115,15 +102,13 @@ export default function InicioScreen() {
 
   const handleNavigateToCrearLiga = () => {
     if (ligas.length >= 5) {
-      // Mostrar la alerta personalizada si el usuario tiene 5 o más ligas
       setAlertMessage("Ya no puedes crear o unirte a más ligas.");
       setIsAlertVisible(true);
     } else {
-      navigation.navigate("CrearLiga", { refreshLigas, setSelectedLiga }); // Pasamos la función para que se seleccione la liga
+      navigation.navigate("CrearLiga", { refreshLigas, setSelectedLiga });
     }
   };
 
-  // Función para cerrar la alerta personalizada
   const closeAlert = () => {
     setIsAlertVisible(false);
   };
@@ -153,44 +138,45 @@ export default function InicioScreen() {
                 </Text>
               </>
             )}
-            {isLoading && <Text style={{ fontSize: 18 }}>Cargando datos...</Text>}
+            {isLoading ? (
+              <Text style={{ fontSize: 18 }}>Cargando ligas...</Text>
+            ) : (
+              <FlatList
+                data={ligas}
+                keyExtractor={(item) => item.UsuarioLigaID.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleSelectLiga(item)}>
+                    <View
+                      style={{
+                        padding: 10,
+                        marginBottom: 10,
+                        borderWidth: 1,
+                        borderColor:
+                          selectedLiga?.LigaID === item.LigaID ? "#007BFF" : "#ccc",
+                        borderRadius: 5,
+                        backgroundColor:
+                          selectedLiga?.LigaID === item.LigaID ? "#E6F0FF" : "#FFF",
+                      }}
+                    >
+                      <Text style={{ fontSize: 16 }}>{item.nombre}</Text>
+                      <Text style={{ fontSize: 14 }}>
+                        Total de participantes: {item.totalParticipantes}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+              />
+            )}
           </>
         ) : (
           <Text style={{ fontSize: 18, marginBottom: 20 }}>Cargando tu ID...</Text>
         )}
       </View>
 
-      {/* Lista de ligas */}
-      <FlatList
-        data={ligas}
-        keyExtractor={(item) => item.UsuarioLigaID.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleSelectLiga(item)}>
-            <View
-              style={{
-                padding: 10,
-                marginBottom: 10,
-                borderWidth: 1,
-                borderColor:
-                  selectedLiga?.LigaID === item.LigaID ? "#007BFF" : "#ccc",
-                borderRadius: 5,
-                backgroundColor:
-                  selectedLiga?.LigaID === item.LigaID ? "#E6F0FF" : "#FFF",
-              }}
-            >
-              <Text style={{ fontSize: 16 }}>{item.nombre}</Text>
-              <Text style={{ fontSize: 14 }}>
-                Total de participantes: {item.totalParticipantes}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )}
-        ListFooterComponent={() => (
-          <View style={{ paddingVertical: 20 }}>
-            <Button title="Cerrar sesión" onPress={handleLogout} style={{ marginTop: 20 }} />
-          </View>
-        )}
-      />
+      {/* Footer */}
+      <View style={{ paddingVertical: 20 }}>
+        <Button title="Cerrar sesión" onPress={handleLogout} />
+      </View>
 
       {/* Alerta personalizada */}
       {isAlertVisible && (

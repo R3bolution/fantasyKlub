@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from "react";
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { obtenerPlantilla } from "../../../database/consultas";
 
 const PlantillaScreen = () => {
   const [jugadores, setJugadores] = useState([]);
@@ -20,14 +20,11 @@ const PlantillaScreen = () => {
       const ligaId = await AsyncStorage.getItem("UsuarioLigaID");
       setUsuarioLigaID(ligaId);
 
-      const response = await axios.post('http://192.168.1.27:3000/api/equipo/plantilla', {
-        UsuarioLigaID: ligaId,
-      });
-
-      setJugadores(response.data);
+      const data = await obtenerPlantilla(ligaId);
+      setJugadores(data);
     } catch (err) {
-      console.error('Error al hacer la solicitud:', err);
-      setError(err.message || 'Error al obtener los datos');
+      console.error("Error al hacer la solicitud:", err);
+      setError(err.message || "Error al obtener los datos");
     } finally {
       setLoading(false);
     }
@@ -51,10 +48,10 @@ const PlantillaScreen = () => {
 
   const seleccionarJugador = async (jugadorID) => {
     try {
-      await AsyncStorage.setItem('JugadorSeleccionadoID', jugadorID.toString());
-      navigation.navigate('InfoJugador');
+      await AsyncStorage.setItem("JugadorSeleccionadoID", jugadorID.toString());
+      navigation.navigate("InfoJugador");
     } catch (err) {
-      console.error('Error al guardar el ID del jugador:', err);
+      console.error("Error al guardar el ID del jugador:", err);
     }
   };
 
@@ -68,9 +65,7 @@ const PlantillaScreen = () => {
 
   const ListHeader = () => (
     <View>
-      <Text style={styles.infoText}>
-        UsuarioLigaID seleccionado: {usuarioLigaID}
-      </Text>
+      <Text style={styles.infoText}>UsuarioLigaID seleccionado: {usuarioLigaID}</Text>
       <Text style={styles.header}>Jugadores:</Text>
     </View>
   );
@@ -101,49 +96,49 @@ const PlantillaScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f7f7f7',
+    backgroundColor: "#f7f7f7",
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    color: '#333',
+    color: "#333",
   },
   listContainer: {
     padding: 10,
   },
   itemContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 15,
     marginBottom: 10,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
   },
   itemText: {
     fontSize: 16,
-    color: '#555',
+    color: "#555",
   },
   errorText: {
-    color: 'red',
+    color: "red",
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginTop: 20,
   },
   noPlayersText: {
     fontSize: 18,
-    color: '#555',
-    fontStyle: 'italic',
-    textAlign: 'center',
+    color: "#555",
+    fontStyle: "italic",
+    textAlign: "center",
     marginTop: 20,
   },
   infoText: {
     fontSize: 16,
     marginBottom: 10,
-    color: '#555',
+    color: "#555",
   },
 });
 

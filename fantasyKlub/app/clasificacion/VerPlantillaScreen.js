@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import { obtenerPlantilla } from "../../database/consultas";  // Importa la función de consultas
 
 export default function VerPlantillaScreen() {
   const [usuarioLigaID, setUsuarioLigaID] = useState(null);  // Estado para almacenar el UsuarioLigaID
@@ -17,14 +17,12 @@ export default function VerPlantillaScreen() {
         const storedUsuarioLigaID = await AsyncStorage.getItem('verJugador');
         setUsuarioLigaID(storedUsuarioLigaID);
         const storedNombre = await AsyncStorage.getItem('verNombre');
-        setNombre(storedNombre); 
+        setNombre(storedNombre);
 
         if (storedUsuarioLigaID) {
-          // Solicitar la plantilla de jugadores
-          const response = await axios.post('http://192.168.1.27:3000/api/equipo/plantilla', {
-            UsuarioLigaID: storedUsuarioLigaID,
-          });
-          setJugadores(response.data);  // Guardar los jugadores en el estado
+          // Llamar a la función que obtiene la plantilla de jugadores desde consultas.js
+          const plantilla = await obtenerPlantilla(storedUsuarioLigaID);
+          setJugadores(plantilla);  // Guardar los jugadores en el estado
         } else {
           setError("No se encontró el UsuarioLigaID.");
         }

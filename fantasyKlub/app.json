@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "fantasyKlub",
+    "name": "Fantasy Klub",
     "slug": "fantasyKlub",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -21,7 +21,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.r3bo.fantasyKlub"
+      "package": "com.r3bo.fantasyKlub",
+      "userInterfaceStyle": "light"
     },
     "web": {
       "favicon": "./assets/favicon.png"

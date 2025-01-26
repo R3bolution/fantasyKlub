@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { obtenerJugadorPorID } from "../../../database/consultas";
 
 const InfoJugadorScreen = () => {
-  const [jugador, setJugador] = useState(null); // Datos del jugador
-  const [loading, setLoading] = useState(false); // Cargando
-  const [error, setError] = useState(null); // Error
-  const [userLigaID, setUserLigaID] = useState(null); // UsuarioLigaID
-  const [jugadorID, setJugadorID] = useState(null); // JugadorID
+  const [jugador, setJugador] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [userLigaID, setUserLigaID] = useState(null);
+  const [jugadorID, setJugadorID] = useState(null);
 
   const obtenerJugador = async () => {
     setLoading(true);
@@ -16,33 +16,27 @@ const InfoJugadorScreen = () => {
 
     try {
       // Recuperar UsuarioLigaID y JugadorID de AsyncStorage
-      const storedUsuarioLigaID = await AsyncStorage.getItem('UsuarioLigaID');
-      const storedJugadorID = await AsyncStorage.getItem('JugadorSeleccionadoID');
+      const storedUsuarioLigaID = await AsyncStorage.getItem("UsuarioLigaID");
+      const storedJugadorID = await AsyncStorage.getItem("JugadorSeleccionadoID");
 
       if (!storedUsuarioLigaID || !storedJugadorID) {
-        throw new Error('No se pudo recuperar UsuarioLigaID o JugadorID.');
+        throw new Error("No se pudo recuperar UsuarioLigaID o JugadorID.");
       }
 
       setUserLigaID(storedUsuarioLigaID);
       setJugadorID(storedJugadorID);
 
-      // Hacer la solicitud al servidor
-      const response = await axios.post('http://192.168.1.27:3000/api/equipo/obtenerJugador', {
-        UsuarioLigaID: storedUsuarioLigaID,
-        JugadorID: storedJugadorID,
-      });
+      // Llamar a la función externa para obtener los datos del jugador
+      const data = await obtenerJugadorPorID(storedUsuarioLigaID, storedJugadorID);
 
-      console.log('Datos del jugador:', response.data);
-
-      // Validar los datos recibidos
-      if (response.data && response.data.Nombre) {
-        setJugador(response.data);
+      if (data && data.Nombre) {
+        setJugador(data);
       } else {
-        throw new Error('Datos del jugador no válidos.');
+        throw new Error("Datos del jugador no válidos.");
       }
     } catch (err) {
-      console.error('Error al obtener el jugador:', err);
-      setError(err.message || 'Error al obtener los datos del jugador');
+      console.error("Error al obtener el jugador:", err);
+      setError(err.message || "Error al obtener los datos del jugador");
     } finally {
       setLoading(false);
     }
@@ -83,42 +77,42 @@ const InfoJugadorScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#f7f7f7',
+    backgroundColor: "#f7f7f7",
   },
   infoContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    width: '90%',
+    width: "90%",
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    color: '#333',
-    textAlign: 'center',
+    color: "#333",
+    textAlign: "center",
   },
   infoText: {
     fontSize: 18,
     marginBottom: 10,
-    color: '#555',
+    color: "#555",
   },
   errorText: {
-    color: 'red',
+    color: "red",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   noDataText: {
     fontSize: 18,
-    color: '#555',
-    fontStyle: 'italic',
+    color: "#555",
+    fontStyle: "italic",
   },
 });
 
